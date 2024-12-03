@@ -1,4 +1,4 @@
 # TicTacToe
 
 ## Team & Member  
-Team : TicTacToeArtist  
+Team : 세칸 승부사
