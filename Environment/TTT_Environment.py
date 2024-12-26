@@ -76,25 +76,23 @@ class Environment:
         self.player = True
 
 
-    def render(self, state):
+    def render(self):
         '''
-        Print the (input)state as a string.
+        Print the present state as a string.
         first player: X / second player: O
         '''
-        state = state if self.player else state[[1, 0]]
-        state = state.reshape(2, -1)
-        board = state[0] - state[1] # -1: player / 1: enemy
-        check_board = list(map(lambda x: 'X' if board[x] == -1 else 'O' if board[x] == 1 else '.', self.action_space))
+        board = self.state_first - self.state_second # -1: player / 1: enemy
+        check_board = list(map(lambda x: 'X' if board[x] == 1 else 'O' if board[x] == -1 else '.', self.action_space))
 
         # string으로 변환하고 game board 형태로 출력
         board_string = ' '.join(check_board)
         formatted_string = '\n'.join([board_string[i:i+6] for i in range(0, len(board_string), 6)])
 
         print(formatted_string)
-        print("-"*10)
+        print("-"*7)
         
 
-    def check_legal_action(self, state):
+    def get_legal_actions(self, state):
         '''
         Return legal action array(one-hot encoding) in (input)state.
         '''
@@ -131,7 +129,7 @@ class Environment:
         self.player = not self.player
 
 
-    def check_reward(self, is_win):
+    def get_reward(self, is_win):
         '''
         Return rewards with consideration for the player.
         - draw, progress: 0 / lose: -1 / win: 1
