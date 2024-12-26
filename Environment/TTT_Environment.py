@@ -23,12 +23,9 @@ class Environment:
         self.num_actions = self.n ** 2 # 9
 
         # state, action
-        self.state_first = np.zeros((self.n, self.n)) # (3, 3), present_state[0]: state for first player
+        self.state_first = np.zeros((self.n, self.n)) # (3, 3)
         self.state_second = np.zeros((self.n, self.n)) # (3, 3)
-        # present_state refers to state_first and state_second
-        self.present_state = np.empty((2, self.n, self.n)) # (2, 3, 3)
-        self.present_state[0] = self.state_first
-        self.present_state[1] = self.state_second
+        self.present_state = np.zeros((2, self.n, self.n)) # (2, 3, 3), present_state[0]: state for first player
 
         self.action_space = np.arange(self.num_actions) # [0, 1, ..., 8] : action idx
 
@@ -48,15 +45,16 @@ class Environment:
         x, y = divmod(action_idx, self.n)
 
         self.present_state[0][x, y] = 1
+        self._update_state(action_idx)
 
         # check winner of the game
         next_state = self.present_state
         done, is_win = self.is_done(next_state[0])
-        reward = self.check_reward(is_win)
+        reward = self.get_reward(is_win)
         self.done = done
 
         # change turn
-        self.change_player()
+        self._change_player()
         
         return next_state ,reward, done, is_win
 
@@ -67,21 +65,21 @@ class Environment:
         '''
         self.state_first = np.zeros((self.n, self.n))
         self.state_second = np.zeros((self.n, self.n))
-
-        self.present_state = np.empty((2, self.n, self.n))
-        self.present_state[0] = self.state_first
-        self.present_state[1] = self.state_second
+        self.present_state = np.zeros((2, self.n, self.n))
 
         self.done = False
         self.player = True
 
 
-    def render(self):
+    def render(self, state):
         '''
-        Print the present state as a string.
+        Print the (input)state as a string.
         first player: X / second player: O
         '''
-        board = self.state_first - self.state_second # -1: player / 1: enemy
+        state = state if self.player else state[[1, 0]]
+        state = state.reshape(2,-1)
+        board = state[0] - state[1] # -1: player / 1: enemy
+        board = board.reshape(-1)
         check_board = list(map(lambda x: 'X' if board[x] == 1 else 'O' if board[x] == -1 else '.', self.action_space))
 
         # string으로 변환하고 game board 형태로 출력
@@ -121,12 +119,23 @@ class Environment:
         return is_done, is_win
 
 
-    def change_player(self):
+    def _change_player(self):
         '''
         Change the state and the player to next player.
         '''
         self.present_state[[0, 1]] = self.present_state[[1, 0]]
         self.player = not self.player
+
+
+    def _update_state(self, action_idx):
+        '''
+        Update the state according to the player.
+        '''
+        x, y = divmod(action_idx, self.n)
+        if self.player:
+            self.state_first[x, y] = 1
+        else:
+            self.state_second[x, y] = 1
 
 
     def get_reward(self, is_win):
@@ -146,7 +155,7 @@ class Environment:
         '''
         Randomly select one action in legal actions.
         '''
-        legal_actions = self.check_legal_action(state)
+        legal_actions = self.get_legal_actions(state)
         legal_action_idxs = np.where(legal_actions != 0)[0]
         action = np.random.choice(legal_action_idxs)
 
