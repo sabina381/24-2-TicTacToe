@@ -47,21 +47,23 @@ class Environment:
         '''
         x, y = divmod(action_idx, self.n)
 
-        self.change_player() # change turn
-        self.present_state[1][x, y] = -1
+        self.present_state[0][x, y] = 1
 
         # check winner of the game
         next_state = self.present_state
-        done, is_win = self.is_done(next_state[1])
+        done, is_win = self.is_done(next_state[0])
         reward = self.check_reward(is_win)
         self.done = done
+
+        # change turn
+        self.change_player()
         
         return next_state ,reward, done, is_win
 
 
     def reset(self):
         '''
-        game reset
+        Reset game.
         '''
         self.state_first = np.zeros((self.n, self.n))
         self.state_second = np.zeros((self.n, self.n))
@@ -73,9 +75,10 @@ class Environment:
         self.done = False
         self.player = True
 
+
     def render(self, state):
         '''
-        print by string
+        Print the (input)state as a string.
         first player: X / second player: O
         '''
         state = state if self.player else state[[1, 0]]
@@ -93,7 +96,7 @@ class Environment:
 
     def check_legal_action(self, state):
         '''
-        board에서 가능한 action array를 원핫으로 출력
+        Return legal action array(one-hot encoding) in (input)state.
         '''
         state = state.reshape(2,-1)
         board = state[0]+state[1]
@@ -103,18 +106,18 @@ class Environment:
 
     def is_done(self, state):
         '''
-        game의 종료 여부 확인
-        is_win: True - win / False - draw
+        Check the winner of the game.
+        - is_win= True: win / False: draw
         '''
         is_done, is_win = False, False
 
         # 무승부 여부 확인
-        if state.sum() == -9:
+        if state.sum() == 9:
             is_done, is_win = True, False
 
         # 승리 조건 확인
         axis_diag_sum = np.concatenate([state.sum(axis=0), state.sum(axis=1), [state.trace()], [np.fliplr(state).trace()]]) # (8, )
-        if -3 in axis_diag_sum:
+        if 3 in axis_diag_sum:
             is_done, is_win = True, True
 
         return is_done, is_win
@@ -122,8 +125,7 @@ class Environment:
 
     def change_player(self):
         '''
-        state를 다음 턴으로 돌려줌
-        player를 다음 player로 바꿈
+        Change the state and the player to next player.
         '''
         self.present_state[[0, 1]] = self.present_state[[1, 0]]
         self.player = not self.player
@@ -131,10 +133,8 @@ class Environment:
 
     def check_reward(self, is_win):
         '''
-        reward를 주는 함수
-        draw, progress: 0 
-        first player 기준 reward 제공
-        player를 돌린 후 reward를 제공하는 것 고려
+        Return rewards with consideration for the player.
+        - draw, progress: 0 / lose: -1 / win: 1
         '''
         reward = 0
 
@@ -146,7 +146,7 @@ class Environment:
     # 부가적인 메서드
     def choose_random_action(self, state):
         '''
-        가능한 action 중에서 random으로 action을 선택한다.
+        Randomly select one action in legal actions.
         '''
         legal_actions = self.check_legal_action(state)
         legal_action_idxs = np.where(legal_actions != 0)[0]
