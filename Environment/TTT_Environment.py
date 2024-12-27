@@ -45,7 +45,7 @@ class Environment:
 
         # check winner of the game
         next_state = self.present_state
-        done, is_win = self.is_done(next_state[0])
+        done, is_win = self.is_done(next_state)
         reward = self.get_reward(is_win)
         self.done = done
 
@@ -73,14 +73,14 @@ class Environment:
         state = state.reshape(2,-1)
         board = state[0] - state[1] # -1: player / 1: enemy
         board = board.reshape(-1)
-        check_board = list(map(lambda x: 'X' if board[x] == 1 else 'O' if board[x] == -1 else '.', self.action_space))
+        board_list = list(map(lambda x: 'X' if board[x] == 1 else 'O' if board[x] == -1 else '.', self.action_space))
 
         # string으로 변환하고 game board 형태로 출력
-        board_string = ' '.join(check_board)
+        board_string = ' '.join(board_list)
         formatted_string = '\n'.join([board_string[i:i+6] for i in range(0, len(board_string), 6)])
 
         print(formatted_string)
-        print("-"*7)
+        # print("-"*7)
         
 
     def get_legal_actions(self, state):
@@ -100,12 +100,14 @@ class Environment:
         '''
         is_done, is_win = False, False
 
+
         # 무승부 여부 확인
-        if state.sum() == self.n ** 2:
+        if np.sum(state) == self.n ** 2:
             is_done, is_win = True, False
 
+        my_state = state[0]
         # 승리 조건 확인
-        win_condition = np.concatenate([state.sum(axis=0), state.sum(axis=1), [state.trace()], [np.fliplr(state).trace()]]) # (8, )
+        win_condition = np.concatenate([my_state.sum(axis=0), my_state.sum(axis=1), [my_state.trace()], [np.fliplr(my_state).trace()]]) # (8, )
         if self.n in win_condition:
             is_done, is_win = True, True
 
@@ -133,7 +135,7 @@ class Environment:
         return reward
 
     # 부가적인 메서드
-    def choose_random_action(self, state):
+    def get_random_action(self, state):
         '''
         Randomly select one action in legal actions.
         '''
