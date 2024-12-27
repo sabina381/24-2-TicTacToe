@@ -23,10 +23,7 @@ class Environment:
         self.num_actions = self.n ** 2 # 9
 
         # state, action
-        self.state_first = np.zeros((self.n, self.n)) # (3, 3)
-        self.state_second = np.zeros((self.n, self.n)) # (3, 3)
         self.present_state = np.zeros((2, self.n, self.n)) # (2, 3, 3), present_state[0]: state for first player
-
         self.action_space = np.arange(self.num_actions) # [0, 1, ..., 8] : action idx
 
         # reward, done
@@ -45,7 +42,6 @@ class Environment:
         x, y = divmod(action_idx, self.n)
 
         self.present_state[0][x, y] = 1
-        self._update_state(action_idx)
 
         # check winner of the game
         next_state = self.present_state
@@ -63,10 +59,7 @@ class Environment:
         '''
         Reset game.
         '''
-        self.state_first = np.zeros((self.n, self.n))
-        self.state_second = np.zeros((self.n, self.n))
         self.present_state = np.zeros((2, self.n, self.n))
-
         self.done = False
         self.player = True
 
@@ -125,17 +118,6 @@ class Environment:
         '''
         self.present_state[[0, 1]] = self.present_state[[1, 0]]
         self.player = not self.player
-
-
-    def _update_state(self, action_idx):
-        '''
-        Update the state according to the player.
-        '''
-        x, y = divmod(action_idx, self.n)
-        if self.player:
-            self.state_first[x, y] = 1
-        else:
-            self.state_second[x, y] = 1
 
 
     def get_reward(self, is_win):
