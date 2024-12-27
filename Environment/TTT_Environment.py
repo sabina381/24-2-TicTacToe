@@ -90,7 +90,7 @@ class Environment:
         state = state.reshape(2,-1)
         board = state[0]+state[1]
         legal_actions = np.array([board[x] == 0 for x in self.action_space], dtype = int)
-        return legal_actions
+        return legal_actions # [9]
 
 
     def is_done(self, state):
@@ -101,12 +101,12 @@ class Environment:
         is_done, is_win = False, False
 
         # 무승부 여부 확인
-        if state.sum() == 9:
+        if state.sum() == self.n ** 2:
             is_done, is_win = True, False
 
         # 승리 조건 확인
-        axis_diag_sum = np.concatenate([state.sum(axis=0), state.sum(axis=1), [state.trace()], [np.fliplr(state).trace()]]) # (8, )
-        if 3 in axis_diag_sum:
+        win_condition = np.concatenate([state.sum(axis=0), state.sum(axis=1), [state.trace()], [np.fliplr(state).trace()]]) # (8, )
+        if self.n in win_condition:
             is_done, is_win = True, True
 
         return is_done, is_win
