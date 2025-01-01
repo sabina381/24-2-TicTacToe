@@ -18,7 +18,7 @@ void setup() {
 }
 
 void loop() {
-    if (Serial.available()) {
+    if (Serial.available()) { // 새로운 데이터가 들어왔는지 확인
         char command = Serial.read(); // Python에서 보낸 명령 읽기
 
         switch (current_state) {
