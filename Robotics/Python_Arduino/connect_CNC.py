@@ -29,7 +29,7 @@ def send_to_robot(first_command, second_command):
                         print(f"Arduino Response: {response}")
                         break
 
-                current_state = 0 if first_command == 'start' else 1
+                current_state = 1
 
             elif first_command == 'exit':
                 break
