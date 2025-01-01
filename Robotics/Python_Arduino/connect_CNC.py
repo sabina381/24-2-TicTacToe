@@ -7,8 +7,6 @@ import time
 ser = serial.Serial('/dev/cu.usbserial-110', 115200)
 print("Communication Successfully started") # 연결 확인용
 
-current_state = 0
-
 # 해당 신호를 보내는 함수
 def send_to_robot(first_command, second_command):
     '''
@@ -16,6 +14,8 @@ def send_to_robot(first_command, second_command):
     second_command : action location (int 0~8)
     Note: If you command "draw game board", input 'exit' in second_command.
     '''
+    current_state = 0
+    
     while True:
         if current_state == 0: # First command: draw game board / O / X
             if first_command in ['start', 'O', 'X']:
