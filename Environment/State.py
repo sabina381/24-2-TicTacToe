@@ -4,14 +4,15 @@ import math
 from typing import Tuple
 import copy
 
+from Environment import Environment
+
 # parameter
 STATE_SIZE = (3, 3)
 
 # State
-class State:
+class State(Environment):
     def __init__(self, state=None, enemy_state=None):
-        self.n = STATE_SIZE[0]
-        self.action_space = np.arange(self.n ** 2)
+        super().__init__()
         self.state = state if state != None else [0] * (self.n ** 2)
         self.enemy_state = enemy_state if enemy_state != None else [0] * (self.n ** 2)
 
@@ -67,4 +68,9 @@ class State:
         return action
 
 
+    def __str__(self):
+        '''
+        이 state 렌더링
+        '''
+        super().render(self)
 
