@@ -1,10 +1,7 @@
 import numpy as np
 
-from State import State
-
 # parameter
 STATE_SIZE = (3, 3)
-present_state = State()
 
 # Environment class
 class Environment:

@@ -1,10 +1,9 @@
 import numpy as np
 import random
-import math
 from typing import Tuple
 import copy
 
-from Environment import Environment
+from Environment2 import Environment
 
 # parameter
 STATE_SIZE = (3, 3)
