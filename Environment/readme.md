@@ -5,10 +5,22 @@
 **Creator** : Seungyeon Lee \
 **Date** : 2024-12-27
 
-# 현재 상황
-1. **TTT_Environment.py** 는 완전하게 작동하는 환경입니다.
-2. **TTT_Environment2.py** 는 State 클래스를 구현한 상태입니다. reward를 주는 등 Environment의 역할을 다하지 못하는 상태입니다.
+# Environment1
 
-- 2의 경우, 1) environment 클래스를 따로 구현하는 방법과 2) main에서 environment의 역할을 대신하도록 구현하는 방법을 선택해야 합니다.
-- 현재 1번 환경의 속도가 조금 더 빠릅니다.
-- 2번 환경을 굳이 수정해서 업로드한 이유는 게임트리와의 상호작용이 더 좋을 것으로 예상되기 때문입니다. 우선적으로 1번 환경을 사용하되, 게임트리에서 너무 복잡해진다면 2번 환경을 사용하는 방법을 고려해볼 필요가 있습니다.
+- 추후 작성 (사용하지 않을 가능성이 높은 환경)
+
+# Environment2
+
+**State.py + Environment2.py**
+- 두 개의 class로 구현. State class에서 Environment class를 상속받아 사용 (사용하는 기능은 많지 않음. 속도 개선을 위해 상속을 삭제할수도 있음)
+- Environment 객체는 한 번만 생성해서 계속 사용 가능
+    - 게임의 진행 상황, State에 전혀 귀속되지 않은 독립적인 환경.
+- State 객체는 각 state 하나하나마다 생성됨
+
+## class: State
+
+- 추후 작성
+
+## class: Environment
+
+- 추후 작성
