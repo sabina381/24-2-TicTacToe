@@ -1,17 +1,17 @@
 import numpy as np
 import random
-import math
 from typing import Tuple
 import copy
+
+from Environment2 import Environment
 
 # parameter
 STATE_SIZE = (3, 3)
 
 # State
-class State:
+class State(Environment):
     def __init__(self, state=None, enemy_state=None):
-        self.n = STATE_SIZE[0]
-        self.action_space = np.arange(self.n ** 2)
+        super().__init__()
         self.state = state if state != None else [0] * (self.n ** 2)
         self.enemy_state = enemy_state if enemy_state != None else [0] * (self.n ** 2)
 
@@ -19,18 +19,30 @@ class State:
         self.enemy_state = np.array(self.enemy_state).reshape(STATE_SIZE)
 
 
-    def total_pieces_count(self):
+    def _total_pieces_count(self):
+        '''
+        이 state의 전체 돌의 개수를 반환한다.
+        '''
         total_state = self.state + self.enemy_state
         return np.sum(total_state)
 
 
     def get_legal_actions(self):
+        '''
+        이 state에서 가능한 action을
+        one-hot encoding 형식의 array로 반환한다.
+        '''
         total_state = (self.state + self.enemy_state).reshape(-1)
         legal_actions = np.array([total_state[x] == 0 for x in self.action_space], dtype = int)
         return legal_actions
 
 
-    def is_done(self):
+    def check_done(self):
+        '''
+        이 state의 done, lose 여부를 반환한다.
+        note: 상대가 행동한 후, 자신의 행동을 하기 전 이 state를 확인한다.
+        따라서 이전 state에서 상대의 행동으로 상대가 이긴 경우는 이 state의 플레이어가 진 경우이다.
+        '''
         is_done, is_lose = False, False
 
         # Check draw
@@ -46,6 +58,10 @@ class State:
 
 
     def next(self, action_idx):
+        '''
+        주어진 action에 따라 다음 state를 생성한다.
+        note: 다음 state는 상대의 차례이므로 state 순서를 바꾼다.
+        '''
         x, y =np.divmod(action_idx, self.n)
         state = self.state.copy()
         state[x, y] = 1
@@ -56,26 +72,26 @@ class State:
         return State(enemy_state, state)
 
 
-    def is_first_player(self):
+    def check_first_player(self):
+        '''
+        이 state의 플레이어가 first player인지 확인한다.
+        '''
         return (self.total_pieces_count() % 2) == 0
 
 
-    def render(self):
-        board = self.state - self.enemy_state if self.is_first_player() else self.enemy_state - self.state
-        board = board.reshape(-1)
-        board_list = list(map(lambda x: 'X' if board[x] == 1 else 'O' if board[x] == -1 else '.', self.action_space))
-
-        board_string = ' '.join(board_list)
-        formatted_string = '\n'.join([board_string[i:i+6] for i in range(0, len(board_string), 6)])
-
-        print(formatted_string)
-        # print("-"*7)
-
     def get_random_action(self):
+        '''
+        이 state에서 가능한 action 중 랜덤으로 action을 반환한다.
+        '''
         legal_actions = self.get_legal_actions()
         legal_action_idxs = np.where(legal_actions != 0)[0]
         action = np.random.choice(legal_action_idxs)
         return action
 
 
+    def __str__(self):
+        '''
+        이 state를 렌더링한다.
+        '''
+        super().render(self)
 
