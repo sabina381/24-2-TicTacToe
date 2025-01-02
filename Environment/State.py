@@ -19,7 +19,7 @@ class State(Environment):
         self.enemy_state = np.array(self.enemy_state).reshape(STATE_SIZE)
 
 
-    def total_pieces_count(self):
+    def _total_pieces_count(self):
         '''
         이 state의 전체 돌의 개수를 반환한다.
         '''
