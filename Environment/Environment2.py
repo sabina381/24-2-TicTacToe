@@ -17,10 +17,6 @@ class Environment:
         present_state에 대해 action_idx의 행동에 따라 게임을 한 턴 진행시키고
         next_state, is_done, is_lose를 반환한다.
         '''
-        if action_idx not in present_state.get_legal_actions():
-            print("Error: Invalid action")
-            return None
-
         next_state = present_state.next(action_idx)
         is_done, is_lose = next_state.check_done()
 
@@ -37,7 +33,7 @@ class Environment:
         is_first_player = final_state.check_first_player() # 최종 state의 플레이어
 
         if not is_lose:
-            first_reward, second_reward = self.reward_dict['draw']
+            first_reward, second_reward = self.reward_dict['draw'], self.reward_dict['draw']
         else:  
             first_reward = self.reward_dict['lose'] if is_first_player else self.reward_dict['win']
             second_reward = -first_reward
@@ -51,7 +47,7 @@ class Environment:
         X: first_player, O: second_player
         '''
         is_first_player = state.check_first_player()
-        board = self.state - self.enemy_state if is_first_player else self.enemy_state - self.state
+        board = state.state - state.enemy_state if is_first_player else state.enemy_state - state.state
         board = board.reshape(-1)
         board_list = list(map(lambda x: 'X' if board[x] == 1 else 'O' if board[x] == -1 else '.', self.action_space))
 
