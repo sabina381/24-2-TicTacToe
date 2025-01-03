@@ -24,7 +24,7 @@ void loop() {
         switch (current_state) {
             case 0 :
                 switch (command) {
-                    case 'start' :
+                    case 'S' :
                         artist.drawGameBoard();
                         Serial.println("Done: draw Game board");
                         current_state = 0;

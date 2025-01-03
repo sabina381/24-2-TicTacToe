@@ -10,9 +10,9 @@ current_state = 0
 
 while True:
     if current_state == 0: # First command: draw game board / O / X
-        first_command = input("'start'(draw game board) / 'O' / 'X' :")
+        first_command = input("'S'(draw game board) / 'O' / 'X' :")
 
-        if first_command in ['start', 'O', 'X']:
+        if first_command in ['S', 'O', 'X']:
             ser.write(first_command.encode())  # 명령 전송
             print(f"Sent command: {first_command}")
 
@@ -23,7 +23,7 @@ while True:
                     print(f"Arduino Response: {response}")
                     break
 
-            current_state = 0 if first_command == 'start' else 1
+            current_state = 0 if first_command == 'S' else 1
 
         elif first_command == 'exit':
             break
