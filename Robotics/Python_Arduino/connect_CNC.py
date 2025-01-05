@@ -23,7 +23,6 @@ def send_to_robot(first_command, second_command):
 
                 # Arduino로부터 완료 신호 대기
                 while True:
-                    # if ser.readable():
                     if ser.in_waiting > 0:  # 수신된 데이터가 있으면
                         response = ser.readline().decode()  # 데이터 읽기
                         print(f"Arduino Response: {response}")
