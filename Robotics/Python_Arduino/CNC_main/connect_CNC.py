@@ -20,6 +20,7 @@ def draw_game_board():
     while True:
         ser.write('S'.encode()) # 명령 전송
         print("Sent command: \'S\'")
+        
         waiting_robot()
         break
 
@@ -86,10 +87,10 @@ def waiting_robot():
 
 # 코드 예시
 if __name__=="__main__":
-    ser = connect_serial('/dev/cu.usbserial-110') # 변수명 ser 변경 금지
+    ser = connect_serial('/dev/cu.usbserial-1110') # 변수명 ser 변경 금지
     waiting_robot()
 
     draw_game_board()
-    send_to_robot('X', '1')
-    send_to_robot('O', '7')
+    # send_to_robot('X', '1')
+    # send_to_robot('O', '7')
     
