@@ -14,6 +14,7 @@ from Environment import Environment
 # parameter
 C_PUCT = 1.0
 EVAL_CNT = 50
+TEMPERATURE = 1.0
 
 env = Environment()
 state = State()
@@ -39,7 +40,7 @@ def predict(state, model):
 
 # define Mcts class
 class Mcts:
-    def __init__(self, model, temperature):
+    def __init__(self, model, temperature=TEMPERATURE):
         self.model = model
         self.temperature = temperature
 

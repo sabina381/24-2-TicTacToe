@@ -2,9 +2,14 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname('/Users/seungyeonlee/Documents/GitHub/24-2-TicTacToe'))))
+
+from Environment import Environment
+
 # parameter
-state_size = (3, 3) # env.state_size
-action_size = 9 # env.action_size
+env = Environment()
 
 CONV_UNITS = 64
 RESIDUAL_NUM = 16
@@ -37,7 +42,7 @@ class ResidualBlock(nn.Module):
 
 # main Net
 class Net(nn.Module):
-    def __init__(self, action_size, conv_units):
+    def __init__(self, action_size=env.num_actions, conv_units=CONV_UNITS):
         super().__init__()
         self.conv = nn.Conv2d(in_channels=1, out_channels=conv_units, kernel_size=(3,3), bias=False, padding=1)
         self.bn = nn.BatchNorm2d(conv_units)

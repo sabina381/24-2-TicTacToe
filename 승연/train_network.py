@@ -10,6 +10,7 @@ import pickle
 import random
 
 from ResNet import Net
+from file_save_load import load_history, save_model
 
 import sys
 import os
@@ -53,21 +54,6 @@ def make_dataset(history):
     Y = torch.tensor([policies, results], dtype=torch.float32).to(device) # (batch_size, 2)
     return X, Y
 
-
-# history 불러오는 함수 (self_play와 겹치는 함수)
-def load_history(file):
-    try:
-        with open(file, 'rb') as f:
-            history = pickle.load(f)
-    except FileNotFoundError:
-        history = [] # 파일이 비어있는 경우 빈 리스트 생성
-
-    return history
-
-# 최근 모델 저장 함수 (evaluate_network와 겹치는 함수)
-def save_model(file, model):
-    with open(file, 'wb') as f:
-        pickle.dump(model.state_dict(), f)
 
 # network train하는 함수
 def train_network():

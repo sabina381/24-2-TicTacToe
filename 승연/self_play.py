@@ -5,6 +5,7 @@ import pickle
 
 from ResNet import Net
 from mcts import Mcts
+from file_save_load import load_history, save_history
 
 import sys
 import os
@@ -63,21 +64,6 @@ def self_play(model):
         data.extend(history)
 
     return data
-
-# history 불러오는 함수 (train_network와 겹치는 함수)
-def load_history(file):
-    try:
-        with open(file, 'rb') as f:
-            history = pickle.load(f)
-    except FileNotFoundError:
-        history = [] # 파일이 비어있는 경우 빈 리스트 생성
-
-    return history
-
-# history 저장 함수
-def save_history(file, data):
-    with open(file, 'wb') as f:
-        pickle.dump(data, f)
 
 #############################
 # 동작 확인 및 저장 예시

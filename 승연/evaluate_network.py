@@ -7,6 +7,7 @@ import torch
 
 from mcts import Mcts
 from ResNet import Net
+from file_save_load import load_model, save_model
 
 import sys
 import os
@@ -46,24 +47,10 @@ def play_game(mcts_list):
     return point # first player point
 
 
-# model 파라미터를 가져오는 함수
-def load_model(file, model):
-    with open(file, 'rb') as f:
-        model.load_state_dict(pickle.load(f))
-
-# best model을 저장하는 함수 (train_network와 겹치는 함수)
-def save_model(file, model):
-    with open(file, 'wb') as f:
-        pickle.dump(model, f)
-
-
 # network 평가하는 함수
 def evaluate_network():
-    model_latest = Net(env.num_actions, CONV_UNITS).to(device)
-    model_best = Net(env.num_actions, CONV_UNITS).to(device)
-
-    load_model(f'{file_name}_model_latest.pkl', model_latest)
-    load_model(f'{file_name}_model_best.pkl', model_best)
+    model_latest = load_model(f'{file_name}_model_latest.pkl').to(device)
+    model_best = load_model(f'{file_name}_model_best.pkl').to(device)
 
     mcts_latest = Mcts(model_latest, TEMPERATURE)
     mcts_best = Mcts(model_best, TEMPERATURE)
