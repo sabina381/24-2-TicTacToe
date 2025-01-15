@@ -9,9 +9,9 @@ from Environment import State
 
 
 # Agents
-class EnemyAgents:
-    def __init__(self):
-        pass
+class RandomAgent:
+    __slots__ = ()
 
-    def get_random_action(self, state):
-        return state.get_random_action()
+    def get_action(self, state):
+        return state.get_ramdom_action()
+
