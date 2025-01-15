@@ -1,6 +1,5 @@
 import numpy as np
 import random
-from typing import Tuple
 import copy
 
 from Environment import Environment
@@ -10,6 +9,8 @@ STATE_SIZE = (3, 3)
 
 # State
 class State(Environment):
+    __slots__ = ('state', 'enemy_state')
+
     def __init__(self, state=None, enemy_state=None):
         super().__init__()
         self.state = state if state != None else [0] * (self.n ** 2)
