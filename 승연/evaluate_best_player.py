@@ -28,7 +28,6 @@ def evaluate_best_player():
 
     mcts_best = Mcts(model)
     agents_dict = {'random': RandomAgent(),
-                    'minimax': MinimaxAgent(), 
                     'alpha-beta': AlphaBetaAgent(), 
                     'mcs': McsAgent(),
                     'mcts': MctsAgent()}
