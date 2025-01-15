@@ -5,6 +5,8 @@ STATE_SIZE = (3, 3)
 
 # Environment class
 class Environment:
+    __slots__ = ('n', 'num_actions', 'action_space', 'reward_dict')
+    
     def __init__(self):
         self.n = STATE_SIZE[0]
         self.num_actions = self.n ** 2
@@ -27,11 +29,22 @@ class Environment:
         '''
         게임이 종료된 state에 대해 last player의 reward를 반환한다.
         final_state: 게임이 종료된 state
-        note: final_state가 is_lose라면, 해당 state에서 행동할 차례였던 플레이어가 패배한 것.
         '''
         _, is_lose = final_state.check_done()
         reward = self.reward_dict['lose'] if is_lose else self.reward_dict['draw']
 
+        return reward
+
+
+    def first_player_reward(self, final_state):
+        '''
+        게임이 종료된 state에 대해 first player의 reward를 반환한다.
+        final_state: 게임이 종료된 state
+        note: final_state가 is_lose라면, 해당 state에서 행동할 차례였던 플레이어가 패배한 것.
+        '''
+        is_first_player = final_state.check_first_player()
+        reward = self.get_reward(final_state) if is_first_player else -self.get_reward(final_state)
+        
         return reward
 
 
