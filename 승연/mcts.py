@@ -40,7 +40,7 @@ def predict(state, model):
 
 # define Mcts class
 class Mcts:
-    __slots__ = ('model', 'temperature')
+    __slots__ = ('model', 'temperature', 'Node')
 
     def __init__(self, model, temperature=TEMPERATURE):
         self.model = model
