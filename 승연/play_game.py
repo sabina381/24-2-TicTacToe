@@ -28,7 +28,8 @@ def play_game(player_list):
     return point # first player point
 
 
-def evaluate_algorithm(label, player_list, num_game): # 네트워크 평가랑 같은 함수 공유 가능할 것 같음
+# player_list의 두 에이전트의 대국을 통해 첫 번째 알고리즘의 성능 평가
+def evaluate_algorithm(label, player_list, num_game):
     total_point = 0
     for i in range(num_game):
         if i % 2 == 0:
