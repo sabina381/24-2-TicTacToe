@@ -3,7 +3,7 @@ import torch
 
 from file_save_load import load_model
 from mcts import Mcts
-from enemy_agents import RandomAgent
+from enemy_agents import RandomAgent, AlphaBetaAgent, McsAgent, MctsAgent
 from play_game import evaluate_algorithm
 
 import sys
