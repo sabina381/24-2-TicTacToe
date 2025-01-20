@@ -1,6 +1,6 @@
 # import
 from ResNet import Net
-from self_play import self_play
+from self_play import self_play, play_one_game
 from train_network import train_network
 from evaluate_network import evaluate_network
 from evaluate_best_player import evaluate_best_player

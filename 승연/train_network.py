@@ -10,7 +10,7 @@ import pickle
 import random
 
 from ResNet import Net
-from file_save_load import load_history, save_model
+from file_save_load import load_history, save_model, load_model
 
 import sys
 import os
@@ -58,10 +58,10 @@ def make_dataset(history):
 # network train하는 함수
 def train_network():
     history = load_history(f'{file_name}_history.pkl')
-
+    model = load_model(f'{file_name}_model_latest.pkl')
+    
     for _ in range(TRAIN_EPOCHS):
         X, Y = make_dataset(history)
-        # 우선 그냥 현재의 model로 학습한다는 느낌...
         pred_policy, pred_value = model.forward(X)
         loss = loss_function(pred_policy, pred_value, Y)
         # 역전파

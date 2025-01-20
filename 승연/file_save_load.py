@@ -29,3 +29,16 @@ def load_model(file):
 def save_model(file, model):
     with open(file, 'wb') as f:
         pickle.dump(model.state_dict(), f)
+
+
+# 학습 지표 저장 함수
+def save_visualizing_index(file, data):
+    try:
+        with open(file, 'rb') as f:
+            df = pickle.load(f)
+        df.append(data)
+    except FileNotFoundError:
+        df = data # 파일이 비어있는 경우 빈 리스트 생성
+
+    with open(file, 'wb'):
+        pickle.dump(df, f)
