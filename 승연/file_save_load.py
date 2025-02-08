@@ -1,6 +1,6 @@
 # import
 import pickle
-import deque
+from collections import deque
 
 from ResNet import Net
 
