@@ -87,7 +87,7 @@ def waiting_robot():
 
 # 코드 예시
 if __name__=="__main__":
-    ser = connect_serial('/dev/cu.usbserial-1110') # 변수명 ser 변경 금지
+    ser = connect_serial('/dev/cu.usbserial-110') # 변수명 ser 변경 금지
     waiting_robot()
 
     draw_game_board()

@@ -3,78 +3,85 @@ import numpy as np
 import random
 import math
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname('/Users/seungyeonlee/Documents/GitHub/24-2-TicTacToe'))))
-
 from Environment import Environment
 
 # parameters
 env = Environment()
 
 AB_DEPTH = 100 # 알파베타 알고리즘
-
 MCS_PO_NUM = 30 # MCS 알고리즘
-
 MCTS_EV_NUM = 100 # MCTS 알고리즘
 
 # random agent ################################
 class RandomAgent:
-    __slots__ = ()
+    __slots__ = ('player')
+
+    def __init__(self, player:bool):
+        self.player = player
 
     def get_action(self, state):
-        return state.get_ramdom_action()
+        return state.get_random_action()
 
 
 # alpha-beta(minimax) agent ################################
-class AlphaBetaAgent:
-    __slots__ = ('player', 'best_action')
+# parameter
+AB_DEPTH = 100
 
-    def __init__(self, root_state):
-        self.player = root_state.check_first_player()
+# class
+class AlphaBetaAgent:
+    __slots__ = ('player', 'best_action', 'root_node')
+
+    def __init__(self, player:bool):
+        self.player = player
         self.best_action = None
-        
+        self.root_node = None
+
 
     def get_action(self, state):
+        if self.root_node == None:
+            self.root_node = state
+
         self.minimax(state, AB_DEPTH, -np.Inf, np.Inf)
         return self.best_action
 
 
-    def minimax(self, state, depth, alpha, beta):
-        is_done, _ = state.check_done()
+    def minimax(self, present_state, depth, alpha, beta):
+        is_done, _ = present_state.check_done()
         reward = 0
-
-        legal_actions = np.where(state.get_legal_actions()==1)
+        state = present_state
+        legal_actions = present_state.get_legal_actions()
 
         if is_done or (depth == 0):
-            reward = env.get_reward(state)
+            reward = env.get_reward(present_state)
             return reward
 
-        if state.check_first_player() == self.player: # max player
+        if present_state.check_first_player() == self.player: # max player
             max_eval = -np.Inf
 
             for action in legal_actions:
-                next_state, _, _ = env.step(state)
+                # state = copy.deepcopy(present_state)
+                next_state, _, _ = env.step(state, action)
 
                 eval = self.minimax(next_state, depth-1, alpha, beta)
-                
+
                 if eval > max_eval:
                     best_action = action
                     max_eval = eval
-                
+
                 alpha = max(alpha, eval)
                 if beta <= alpha:
                     break
 
                 if depth == AB_DEPTH: # 최상위 호출에서만 best action 저장
                     self.best_action = best_action
-            
+
             return max_eval
 
         else: # min player
             min_eval = np.Inf
             for action in legal_actions:
-                next_state, _, _ = env.step(state)
+                # state = copy.deepcopy(present_state)
+                next_state, _, _ = env.step(state, action)
 
                 eval = self.minimax(next_state, depth-1, alpha, beta)
                 min_eval = min(min_eval, eval)
@@ -82,20 +89,27 @@ class AlphaBetaAgent:
                 beta = min(beta, eval)
                 if beta <= alpha:
                     break
-            
+
             return min_eval
 
 
 # MCS agent ################################
+# parameter
+MCS_PO_NUM = 30
+
+# class
 class McsAgent():
-    __slots__ = ()
+    __slots__ = ('player')
+
+    def __init__(self, player:bool):
+        self.player = player
 
     def get_action(self, state):
-        legal_actions = np.where(state.get_legal_actions() == 1)
+        legal_actions = state.get_legal_actions()
         value_list = np.zeros(len(legal_actions))
 
         for i, action in enumerate(legal_actions):
-            next_state = env.step(state, action)
+            next_state, _, _ = env.step(state, action)
 
             for _ in range(MCS_PO_NUM):
                 value_list[i] += - self.playout(next_state)
@@ -117,20 +131,27 @@ class McsAgent():
 
 
     def get_max_idx(self, value_list):
+        value_list = list(value_list)
         return value_list.index(max(value_list))
 
 
 # MCTS Agent ################################
-class MctsAgent():
-    __slots__ = ('Node')
+# parameter
+MCTS_EV_NUM = 100
 
-    def __init__(self):
+# class
+class MctsAgent():
+    __slots__ = ('Node', 'player')
+
+    def __init__(self, player:bool):
+        self.player = player
+
         # define Node class ##################
         class Node:
             __slots__ = ('state', 'n', 'w', 'child_nodes')
-            
+
             def __init__(self, state):
-                self.state = state 
+                self.state = state
                 self.n = 0 # visit count
                 self.w = 0 # cumulative sum of values
                 self.child_nodes = None
@@ -173,7 +194,7 @@ class MctsAgent():
                 '''
                 Expand child node
                 '''
-                legal_actions = np.where(self.state.get_legal_actions() == 1)
+                legal_actions = self.state.get_legal_actions()
                 self.child_nodes = []
 
                 for action in legal_actions:
@@ -189,11 +210,11 @@ class MctsAgent():
 
                 # 방문 횟수가 0인 child node 반환
                 if np.any(node_scores == 0):
-                    zero_idx = random.choice(np.where(node_scores == 0))
+                    zero_idx = random.choice(np.where(node_scores == 0)[0])
                     return self.child_nodes[zero_idx]
 
                 total_scores = np.sum(node_scores)
-                
+
                 # UCB1 계산 함수
                 def ucb1(c):
                     return -c.w/c.n + (2*math.log(total_scores)/c.n)**0.5
@@ -216,7 +237,7 @@ class MctsAgent():
                 return - self.playout(next_state)
         #########################################
 
-        self.Node = Node()
+        self.Node = Node
 
 
     def get_action(self, state):
@@ -226,7 +247,7 @@ class MctsAgent():
         for _ in range(MCTS_EV_NUM):
             root_node.evaluate()
 
-        legal_actions = np.where(state.get_legal_actions() == 1)
+        legal_actions = state.get_legal_actions()
 
         child_node_scores = list(map(lambda c: c.n, root_node.child_nodes))
         max_idx = self.get_max_idx(child_node_scores)
@@ -235,5 +256,3 @@ class MctsAgent():
 
     def get_max_idx(self, value_list):
         return value_list.index(max(value_list))
-
-    
